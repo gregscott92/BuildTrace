@@ -1,0 +1,205 @@
+{
+  "generated_at": "2026-03-21T19:02:34.808Z",
+  "summary": {
+    "total_posts": 16,
+    "pending_posts": 0,
+    "posted_posts": 16,
+    "failed_posts": 0,
+    "duplicate_attempts_total": 2,
+    "next_scheduled_post_at": null,
+    "scheduler_heartbeat_at": "2026-03-21T19:02:34.798Z",
+    "active_channels": 2
+  },
+  "mission_status": {
+    "label": "Intervene",
+    "tone": "red"
+  },
+  "by_platform": {
+    "linkedin": 8,
+    "twitter": 8
+  },
+  "drift": {
+    "duplicate_attempts_total": 2,
+    "duplicate_attempts_by_platform": {
+      "linkedin": 1,
+      "twitter": 1
+    },
+    "duplicate_attempts_by_reason": {
+      "same_input_match": 2
+    },
+    "events": [
+      {
+        "type": "duplicate_post_attempt",
+        "reason": "same_input_match",
+        "timestamp": "2026-03-21T18:20:41.539Z",
+        "platform": "linkedin",
+        "content_hash": "0907729a69c676425b424452b8930cea54af391d3e80d0e47e91f2d43accc42d",
+        "source_input_hash": "6c9c6126430894e8614ba2edd5ff5e80de53f248e75105ee881117e11feb59fd",
+        "content_preview": "Today we made significant progress by testing our build logger and launching the first version of the agent! We're exploring ways to overcome our learning setup",
+        "matched_queue_item_id": "d6b3cc25-e8c2-4e68-9628-8dfde85e29e5",
+        "matched_queue_item_status": "pending"
+      },
+      {
+        "type": "duplicate_post_attempt",
+        "reason": "same_input_match",
+        "timestamp": "2026-03-21T18:20:41.559Z",
+        "platform": "twitter",
+        "content_hash": "325d51107e33f27d95cd00b9caa5e236c702a92f86f99d7f0f0df78cc07d3f8b",
+        "source_input_hash": "6c9c6126430894e8614ba2edd5ff5e80de53f248e75105ee881117e11feb59fd",
+        "content_preview": "Successful day - tested our build logger and launched the first agent version! 🚀 Overcoming learning setup blockers and pushing for full automation! #BuildLogg",
+        "matched_queue_item_id": "0d330f77-befd-4c65-a242-3e5a13ded473",
+        "matched_queue_item_status": "pending"
+      }
+    ]
+  },
+  "insights": {
+    "suspiciousPosts": [
+      {
+        "platform": "twitter",
+        "content": "🚀 Just tested the build logger and built the first version of the agent! 💻🤖 Excited about ideas to automate everything and streamline the process! #BuildLogger #TechInnovation",
+        "status": "posted",
+        "created_at": "2026-03-21T18:09:58.616Z",
+        "scheduled_for": "2026-03-21T18:39:58.616Z",
+        "posted_at": "2026-03-21T18:10:01.741Z"
+      },
+      {
+        "platform": "twitter",
+        "content": "Today, I tested the build logger and built the first version of the agent! Encountered some learning challenges, but I'm inspired to automate everything. Exciting times ahead! #BuildLogger #Automation",
+        "status": "posted",
+        "created_at": "2026-03-21T18:13:41.259Z",
+        "scheduled_for": "2026-03-21T18:43:41.259Z",
+        "posted_at": "2026-03-21T18:14:01.769Z"
+      },
+      {
+        "platform": "twitter",
+        "content": "Today was all about testing our build logger & building the first version of our agent! 🚀 We're working through some setup challenges but have great ideas for automating our future processes. #BuildLogger #Automation #TechDevelopment",
+        "status": "posted",
+        "created_at": "2026-03-21T18:14:00.059Z",
+        "scheduled_for": "2026-03-21T18:44:00.059Z",
+        "posted_at": "2026-03-21T18:14:01.770Z"
+      },
+      {
+        "id": "4cb2b80a-844e-44fe-87e4-485d0ecfd951",
+        "platform": "twitter",
+        "content": "Today, I tested the build logger and launched the first version of the agent! 🚀 Encountered some setup challenges, but I’m brainstorming ways to automate everything for better efficiency. #BuildLogger #Automation #Development",
+        "content_hash": "8698ed2e60a7dc6de9c8514ae9ad231e791b935386637e534bfbd655f358748c",
+        "status": "posted",
+        "created_at": "2026-03-21T18:17:46.576Z",
+        "scheduled_for": "2026-03-21T18:47:46.576Z",
+        "posted_at": "2026-03-21T18:18:01.786Z"
+      },
+      {
+        "id": "e98536da-ccbb-46e9-8515-66a3cc5da2eb",
+        "platform": "twitter",
+        "content": "Just finished testing our build logger and built the first version of the agent! 🚀 Still learning the setup, but I'm eager to explore automation to boost our efficiency. #BuildLogger #Automation #DevOps",
+        "content_hash": "8b24f9e1d4dbc94120d6cd7a9aca76cb0c19f4361f1b96ce3b13e19efccfe412",
+        "status": "posted",
+        "created_at": "2026-03-21T18:18:12.949Z",
+        "scheduled_for": "2026-03-21T18:48:12.949Z",
+        "posted_at": "2026-03-21T18:19:01.790Z"
+      },
+      {
+        "id": "0d330f77-befd-4c65-a242-3e5a13ded473",
+        "platform": "twitter",
+        "content": "Today, I tested our build logger and rolled out the first version of the agent! 🚀 Hurdles with the learning setup, but excited to automate everything soon! #BuildLogger #DevOps #Automation",
+        "content_hash": "efa384e1168d337647f2656db668ff388977d150d6295dd582374a5792f3595d",
+        "source_input_hash": "6c9c6126430894e8614ba2edd5ff5e80de53f248e75105ee881117e11feb59fd",
+        "status": "posted",
+        "created_at": "2026-03-21T18:20:32.425Z",
+        "scheduled_for": "2026-03-21T18:50:32.425Z",
+        "posted_at": "2026-03-21T18:21:01.798Z"
+      }
+    ],
+    "readyNow": [],
+    "futurePending": [],
+    "dueSoon": [],
+    "actions": [
+      {
+        "priority": "medium",
+        "title": "Duplicate drift detected",
+        "channel": "Cross-channel behavior",
+        "impact": "2 duplicate attempts were caught.",
+        "nextMove": "Review repeated trigger behavior.",
+        "command": "type queue\\drift.json"
+      },
+      {
+        "priority": "high",
+        "title": "Timing drift detected",
+        "channel": "TWITTER • Default Account",
+        "impact": "6 post(s) were published before schedule.",
+        "nextMove": "Validate scheduler timing logic.",
+        "command": "type queue\\posts.json"
+      },
+      {
+        "priority": "low",
+        "title": "Queue is clear",
+        "channel": "All channels",
+        "impact": "No pending posts remain.",
+        "nextMove": "Generate the next batch.",
+        "command": "node index.js"
+      }
+    ]
+  },
+  "channel_directory": [
+    {
+      "platform": "LINKEDIN",
+      "account": "Default Account",
+      "total": 8,
+      "pending": 0,
+      "posted": 8,
+      "failed": 0
+    },
+    {
+      "platform": "TWITTER",
+      "account": "Default Account",
+      "total": 8,
+      "pending": 0,
+      "posted": 8,
+      "failed": 0
+    }
+  ],
+  "recent_posted_items": [
+    {
+      "id": "0d330f77-befd-4c65-a242-3e5a13ded473",
+      "platform": "twitter",
+      "content": "Today, I tested our build logger and rolled out the first version of the agent! 🚀 Hurdles with the learning setup, but excited to automate everything soon! #BuildLogger #DevOps #Automation",
+      "content_hash": "efa384e1168d337647f2656db668ff388977d150d6295dd582374a5792f3595d",
+      "source_input_hash": "6c9c6126430894e8614ba2edd5ff5e80de53f248e75105ee881117e11feb59fd",
+      "status": "posted",
+      "created_at": "2026-03-21T18:20:32.425Z",
+      "scheduled_for": "2026-03-21T18:50:32.425Z",
+      "posted_at": "2026-03-21T18:21:01.798Z"
+    },
+    {
+      "id": "d6b3cc25-e8c2-4e68-9628-8dfde85e29e5",
+      "platform": "linkedin",
+      "content": "Today, I made strides in developing our build logger by testing it and launching the first version of the agent. While I faced some challenges with the learning setup, I'm eager to explore automation opportunities going forward!",
+      "content_hash": "27095500aba921ae6c7c22d26b042f551d0b42d3238c1ca4eb903fe564eeed1b",
+      "source_input_hash": "6c9c6126430894e8614ba2edd5ff5e80de53f248e75105ee881117e11feb59fd",
+      "status": "posted",
+      "created_at": "2026-03-21T18:20:32.405Z",
+      "scheduled_for": "2026-03-21T18:20:32.405Z",
+      "posted_at": "2026-03-21T18:21:01.798Z"
+    },
+    {
+      "id": "e98536da-ccbb-46e9-8515-66a3cc5da2eb",
+      "platform": "twitter",
+      "content": "Just finished testing our build logger and built the first version of the agent! 🚀 Still learning the setup, but I'm eager to explore automation to boost our efficiency. #BuildLogger #Automation #DevOps",
+      "content_hash": "8b24f9e1d4dbc94120d6cd7a9aca76cb0c19f4361f1b96ce3b13e19efccfe412",
+      "status": "posted",
+      "created_at": "2026-03-21T18:18:12.949Z",
+      "scheduled_for": "2026-03-21T18:48:12.949Z",
+      "posted_at": "2026-03-21T18:19:01.790Z"
+    },
+    {
+      "id": "c81482fb-d6d5-4d72-9f48-5b768c5dc3ba",
+      "platform": "linkedin",
+      "content": "Today, I made progress in testing our build logger and launched the first version of the agent. While I'm navigating the setup, I’m excited about the potential to automate our processes for improved efficiency!",
+      "content_hash": "a2b82986b7d156926e7279f7a50171769bbab29a00b5af71406e484222b0bfbb",
+      "status": "posted",
+      "created_at": "2026-03-21T18:18:12.929Z",
+      "scheduled_for": "2026-03-21T18:18:12.929Z",
+      "posted_at": "2026-03-21T18:19:01.790Z"
+    }
+  ]
+}
