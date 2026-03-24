@@ -196,6 +196,14 @@ app.get("/login", (req, res) => {
 app.post("/login", (req, res) => {
   const password = String(req.body.password || "").trim();
 
+  console.log("LOGIN DEBUG");
+  console.log("APP_PASSWORD RAW:", process.env.APP_PASSWORD);
+  console.log("APP_PASSWORD JSON:", JSON.stringify(process.env.APP_PASSWORD));
+  console.log("APP_PASSWORD LEN:", String(process.env.APP_PASSWORD || "").length);
+  console.log("INPUT PASSWORD JSON:", JSON.stringify(password));
+  console.log("INPUT PASSWORD LEN:", password.length);
+  console.log("MATCHES:", password === APP_PASSWORD);
+
   if (password !== APP_PASSWORD) {
     return res.status(401).send(renderLoginPage("Wrong password"));
   }
@@ -203,7 +211,6 @@ app.post("/login", (req, res) => {
   setAuthCookie(res);
   return res.redirect("/");
 });
-
 app.post("/logout", (req, res) => {
   clearAuthCookie(res);
   return res.redirect("/login");
