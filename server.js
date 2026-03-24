@@ -1,4 +1,5 @@
 require("dotenv").config();
+console.log("BUILDTRACE SERVER VERSION: LOGIN-ROUTE-FIXED");
 const express = require("express");
 const { createClient } = require("@supabase/supabase-js");
 const OpenAI = require("openai");
@@ -13,6 +14,7 @@ const { finalizePost, choosePersona } = require("./lib/persona");
 const { upsertXMetric } = require("./lib/metrics");
 
 const app = express();
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -42,6 +44,179 @@ const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
+
+// =======================
+// SIMPLE PASSWORD LOCK
+// =======================
+
+const APP_PASSWORD = process.env.APP_PASSWORD || "changeme";
+const AUTH_COOKIE_NAME = "buildtrace_auth";
+
+function parseCookies(req) {
+  const header = req.headers.cookie || "";
+  return header.split(";").reduce((acc, part) => {
+    const [rawKey, ...rest] = part.split("=");
+    const key = String(rawKey || "").trim();
+    if (!key) return acc;
+    acc[key] = decodeURIComponent(rest.join("=") || "");
+    return acc;
+  }, {});
+}
+
+function isAuthenticated(req) {
+  const cookies = parseCookies(req);
+  return cookies[AUTH_COOKIE_NAME] === APP_PASSWORD;
+}
+
+function setAuthCookie(res) {
+  const isProd = process.env.NODE_ENV === "production";
+  res.setHeader(
+    "Set-Cookie",
+    `${AUTH_COOKIE_NAME}=${encodeURIComponent(
+      APP_PASSWORD
+    )}; HttpOnly; Path=/; SameSite=Lax${isProd ? "; Secure" : ""}`
+  );
+}
+
+function clearAuthCookie(res) {
+  const isProd = process.env.NODE_ENV === "production";
+  res.setHeader(
+    "Set-Cookie",
+    `${AUTH_COOKIE_NAME}=; HttpOnly; Path=/; Max-Age=0; SameSite=Lax${
+      isProd ? "; Secure" : ""
+    }`
+  );
+}
+
+function escapeHtml(str) {
+  return String(str || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function renderLoginPage(message = "") {
+  return `
+    <html>
+      <head>
+        <title>BuildTrace Login</title>
+        <style>
+          body {
+            background: #0b0f19;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            margin: 0;
+          }
+          .box {
+            background: #111827;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            width: 320px;
+            box-shadow: 0 10px 30px rgba(0,0,0,.35);
+          }
+          input {
+            padding: 10px;
+            margin-top: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            border-radius: 8px;
+            border: 1px solid #374151;
+            background: #0b1220;
+            color: white;
+          }
+          button {
+            margin-top: 12px;
+            padding: 10px;
+            width: 100%;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+          }
+          .msg {
+            color: #fca5a5;
+            min-height: 18px;
+            margin-top: 10px;
+            font-size: 14px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="box">
+          <h2>BuildTrace</h2>
+          <p>Enter password</p>
+          <form method="POST" action="/login">
+            <input type="password" name="password" placeholder="Password" required />
+            <button type="submit">Enter</button>
+          </form>
+          <div class="msg">${escapeHtml(message)}</div>
+        </div>
+      </body>
+    </html>
+  `;
+}
+
+function checkAuth(req, res, next) {
+  if (isAuthenticated(req)) {
+    return next();
+  }
+
+  if (req.path.startsWith("/api/")) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  return res.status(401).send(renderLoginPage());
+}
+
+// =======================
+// PUBLIC ROUTES
+// =======================
+
+app.get("/health", (req, res) => {
+  res.json({ ok: true, service: "build-logger-api" });
+});
+
+app.get("/login", (req, res) => {
+  if (isAuthenticated(req)) {
+    return res.redirect("/");
+  }
+
+  return res.send(renderLoginPage());
+});
+
+app.post("/login", (req, res) => {
+  const password = String(req.body.password || "").trim();
+
+  if (password !== APP_PASSWORD) {
+    return res.status(401).send(renderLoginPage("Wrong password"));
+  }
+
+  setAuthCookie(res);
+  return res.redirect("/");
+});
+
+app.post("/logout", (req, res) => {
+  clearAuthCookie(res);
+  return res.redirect("/login");
+});
+
+// everything except login/health is protected
+app.use((req, res, next) => {
+  if (req.path.startsWith("/login") || req.path === "/health") {
+    return next();
+  }
+
+  return checkAuth(req, res, next);
+});
 
 // =======================
 // BASIC HELPERS
@@ -188,15 +363,6 @@ function archiveQueueItem(item, reason = "archived") {
     archived_at: new Date().toISOString(),
   });
   saveArchiveFile(archive);
-}
-
-function escapeHtml(str) {
-  return String(str || "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#39;");
 }
 
 function normalizeForDrift(value) {
@@ -1697,6 +1863,9 @@ app.get("/runs/:id", async (req, res) => {
       <button class="draft" onclick="updateStatus('${run.id}', 'draft')">Move to Draft</button>
       <button class="postx" onclick="postX('${run.id}')">Post to X</button>
       <button class="btn-orange" onclick="syncXMetrics('${run.id}')">Sync X Metrics</button>
+      <form method="POST" action="/logout" style="display:inline;">
+        <button class="draft" type="submit">Logout</button>
+      </form>
     </div>
   </div>
 
@@ -2370,6 +2539,9 @@ app.get("/", async (req, res) => {
       <a class="btn-link btn-gray" href="/?status=posted">Posted</a>
       <a class="btn-link btn-gray" href="/?status=failed">Failed</a>
       <button class="btn-red" onclick="clearQueue()">Clear Queue</button>
+      <form method="POST" action="/logout" style="display:inline;">
+        <button class="btn-red" type="submit">Logout</button>
+      </form>
     </div>
 
     <div class="top-grid">
@@ -3021,10 +3193,6 @@ app.get("/", async (req, res) => {
   }
 });
 
-app.get("/health", (req, res) => {
-  res.json({ ok: true, service: "build-logger-api" });
-});
-
 app.get("/api/runs", async (req, res) => {
   try {
     let query = supabase
@@ -3082,6 +3250,10 @@ app.get("/api/runs/:id", async (req, res) => {
     });
   }
 });
+
+// =======================
+// FIXED BROKEN ROUTES
+// =======================
 
 app.post("/api/runs/:id/edit", async (req, res) => {
   try {
@@ -3190,7 +3362,7 @@ app.post("/api/runs/:id/edit", async (req, res) => {
   }
 });
 
-app.post("/run", async (req, res) => {
+app.post("/api/run", async (req, res) => {
   try {
     const input = String(req.body.input || "").trim();
     const topicOverride = String(req.body.topicOverride || "").trim();
@@ -3340,90 +3512,22 @@ app.post("/api/runs/:id/post-x", async (req, res) => {
   }
 });
 
-app.post("/auto-post-x", async (req, res) => {
-  try {
-    const { data: runs, error } = await supabase
-      .from("build_logger_runs")
-      .select("*")
-      .eq("status", "approved")
-      .eq("x_post_status", "not_sent");
-
-    if (error) {
-      return res.status(500).json({
-        error: "Failed to fetch runs",
-        details: error.message,
-      });
-    }
-
-    const results = [];
-
-    for (const run of runs) {
-      try {
-        const result = await postRunToX(run);
-        results.push({
-          id: run.id,
-          status: "posted",
-          tweet_id: result.tweet.data.id,
-          account_label: result.account.label,
-          x_handle: result.account.handle,
-        });
-      } catch (err) {
-        await supabase
-          .from("build_logger_runs")
-          .update({
-            x_post_status: "failed",
-            error_message: err.message,
-          })
-          .eq("id", run.id);
-
-        results.push({
-          id: run.id,
-          status: "failed",
-          error: err.message,
-        });
-      }
-    }
-
-    return res.json({
-      message: "Auto-post complete",
-      results,
-    });
-  } catch (err) {
-    return res.status(500).json({
-      error: "Server error",
-      details: err.message,
-    });
-  }
-});
-
 // =======================
 // STARTUP
 // =======================
 
+ensureQueueFiles();
+ensureAccountsFile();
+
 if (ENABLE_LOCAL_CRON) {
-  cron.schedule("0 11 * * *", async () => {
-    console.log("Running scheduled X auto-post...");
-
-    try {
-      const baseUrl = process.env.APP_BASE_URL || `http://localhost:${PORT}`;
-      const response = await fetch(`${baseUrl}/auto-post-x`, {
-        method: "POST",
-      });
-
-      const data = await response.json();
-      console.log("Auto-post result:", data);
-    } catch (err) {
-      console.error("Auto-post failed:", err.message);
-    }
+  cron.schedule("*/5 * * * *", () => {
+    console.log(`[cron] heartbeat ${new Date().toISOString()}`);
   });
-
   console.log("Local cron enabled");
 } else {
   console.log("Local cron disabled");
 }
 
 app.listen(PORT, () => {
-  ensureQueueFiles();
-  ensureAccountsFile();
   console.log(`Build Logger API running on port ${PORT}`);
 });
